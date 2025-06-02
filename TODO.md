@@ -2,6 +2,11 @@
 
 ### Todo
 
+- [ ] Add Particle object class. [2025-06-02] ()  
+- [ ] Add Sprite object class. [2025-06-02] ()  
+- [ ] Add Vector4 object class. [2025-06-02] ()  
+- [ ] Add Vector3 object class. [2025-06-02] ()  
+- [ ] Add Vector2 object class. [2025-06-02] ()  
 - [ ] Add mouse input module. [2025-05-27] ()  
 - [ ] Add keyboard input module. [2025-05-27] ()  
 
