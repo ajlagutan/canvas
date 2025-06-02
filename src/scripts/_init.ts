@@ -1,3 +1,7 @@
 import "../scss/styles.scss";
 
-(function () {})();
+import { SceneManager } from "./infra/SceneManager";
+
+(function () {
+  SceneManager.run();
+})();
