@@ -26,7 +26,9 @@ export class SceneManager {
   private static _scene: SceneBase | null;
   private static _sceneGui: lil.GUI | null;
   private static _sceneStarted: boolean;
-  private static _stageGui: lil.GUI | null;
+  private static _stageGui: lil.GUI;
+  private static _stageGuiPause: lil.Controller;
+  private static _stageGuiPlay: lil.Controller;
   private static _suspended: boolean;
   /**
    * This is a static class.
@@ -79,8 +81,35 @@ export class SceneManager {
         this._cache.set(scene, this._nextScene);
       }
     }
+    this.pause();
+  }
+  /**
+   * Commands the scene manager to suspend the updates of the current scene.
+   * 
+   * 
+   * 
+   * @returns void
+   */
+  public static pause(): void {
     if (this._scene) {
       this._scene.stop();
+      this._stageGuiPlay.enable();
+      this._stageGuiPause.disable();
+    }
+  }
+  /**
+   * Commands the scene manager to resume the updates of the current scene.
+   * 
+   * 
+   * 
+   * @returns void
+   */
+  public static play(): void {
+    if (this._scene) {
+      this._scene.start();
+      this._sceneStarted = true;
+      this._stageGuiPlay.disable();
+      this._stageGuiPause.enable();
     }
   }
   /**
@@ -111,7 +140,7 @@ export class SceneManager {
     if (this.isSceneChanging() && !this.isCurrentSceneBusy()) {
       if (this._scene) {
         this.destroySceneGui();
-        this._scene.stop();
+        this.pause();
       }
       this._scene = this._nextScene;
       if (this._scene) {
@@ -206,18 +235,23 @@ export class SceneManager {
       this._gui = new lil.GUI({ title: "controls" });
       this._gui.add(Graphics, "fpsMeterVisible").name("show fps");
 
+      let dropdown = {};
+      for (let s of Object.keys(scenes).sort()) {
+        dropdown[Object.assign(scenes)[s]["displayName"] ?? s] = s;
+      }
+
       this._stageGui = this._gui.addFolder("stage");
       this._stageGui.add(Graphics, "buffered").name("use buffer");
-      this._stageGui
-        .add(this, "scene", Object.keys(scenes))
-        .name("scene")
-        .listen();
+      this._stageGui.add(this, "scene", dropdown).name("scene").listen();
 
       const name = SceneManager.name;
       const options = localStorage.getItem(`./${name}`);
       if (options) {
         this._stageGui.load(JSON.parse(options), true);
       }
+
+      this._stageGuiPlay = this._stageGui.add(this, "play").disable();
+      this._stageGuiPause = this._stageGui.add(this, "pause").disable();
 
       logger.debug.call(this, "gui:", "initialized.");
     } catch (error) {
@@ -393,11 +427,10 @@ export class SceneManager {
     if (this._scene) {
       if (!this._sceneStarted && this._scene.isready()) {
         this.createSceneGui();
-        this._scene.start();
-        this._sceneStarted = true;
+        this.play();
         Graphics.endLoading();
       }
-      if (this.isCurrentSceneStarted()) {
+      if (this.isCurrentSceneStarted() && !this._scene.issuspended()) {
         this._scene.update(FIXED_STEP);
       }
     }
