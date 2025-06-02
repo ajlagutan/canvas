@@ -54,13 +54,22 @@ export abstract class SceneBase extends DisplayableObject {
   }
   /**
    * Initializes the GUI that controls different properties of the scene.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @param folder The {@link lil.GUI} component assigned for the scene.
    * @returns void
    */
   public controllers(folder: lil.GUI): void {}
+  /**
+   * Draws the sprite to the graphics context.
+   *
+   *
+   *
+   * @param context The graphics context.
+   * @returns void
+   */
+  public draw(context: CanvasRenderingContext2D): void {}
   /**
    * Loads the scene assets.
    *
@@ -73,9 +82,9 @@ export abstract class SceneBase extends DisplayableObject {
   }
   /**
    * Saves the scene state.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @param folder The {@link lil.GUI} component assigned for the scene.
    * @returns void
    */
