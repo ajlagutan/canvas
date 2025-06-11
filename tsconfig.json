@@ -8,6 +8,7 @@
       "@/*": ["src/*"],
       "@/app": ["src/scripts/app"],
       "@/core": ["src/scripts/core"],
+      "@/core/ext": ["src/scripts/core/extensions"],
       "@/infra": ["src/scripts/infra"]
     },
     "skipLibCheck": true,
