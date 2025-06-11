@@ -1,8 +1,14 @@
 import * as lil from "lil-gui";
-import * as scenes from "../app";
-import { Graphics } from "./../core/Graphics";
-import { SceneBase, SceneConstructor } from "./SceneBase";
-import { logger } from "../core/_utils";
+import { Graphics, logger } from "@/core";
+import { SceneBase, SceneConstructor } from "@/app";
+/**
+ * Stores the initialized scenes.
+ *
+ *
+ *
+ * @constant
+ */
+const CACHE: Map<SceneConstructor, SceneBase> = new Map();
 /**
  * Fixed step.
  *
@@ -20,10 +26,10 @@ const FIXED_STEP: number = 1 / 60;
  * @class
  */
 export class SceneManager {
-  private static _cache: Map<SceneConstructor, SceneBase> = new Map();
   private static _gui: lil.GUI;
   private static _nextScene: SceneBase | null;
   private static _scene: SceneBase | null;
+  private static _scenes: Map<any, SceneConstructor> = new Map();
   private static _sceneGui: lil.GUI | null;
   private static _sceneStarted: boolean;
   private static _stageGui: lil.GUI;
@@ -61,7 +67,7 @@ export class SceneManager {
       value = value.constructor.name;
     }
     if (typeof value === "string") {
-      this.goto(scenes[value]);
+      this.goto(this._scenes.get(value));
       return;
     }
     this.goto(undefined);
@@ -76,18 +82,18 @@ export class SceneManager {
    */
   public static goto(scene?: SceneConstructor): void {
     if (scene) {
-      this._nextScene = this._cache.get(scene) ?? new scene();
-      if (!this._cache.has(scene)) {
-        this._cache.set(scene, this._nextScene);
+      this._nextScene = CACHE.get(scene) ?? new scene();
+      if (!CACHE.has(scene)) {
+        CACHE.set(scene, this._nextScene);
       }
     }
     this.pause();
   }
   /**
    * Commands the scene manager to suspend the updates of the current scene.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @returns void
    */
   public static pause(): void {
@@ -99,9 +105,9 @@ export class SceneManager {
   }
   /**
    * Commands the scene manager to resume the updates of the current scene.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @returns void
    */
   public static play(): void {
@@ -111,6 +117,22 @@ export class SceneManager {
       this._stageGuiPlay.disable();
       this._stageGuiPause.enable();
     }
+  }
+  /**
+   * Registers an array of {@linkcode SceneConstructor} to the {@linkcode SceneManager} object.
+   *
+   *
+   *
+   * @param scenes An array of {@linkcode SceneConstructor} to register.
+   * @returns The static instance of {@linkcode SceneManager} object.
+   */
+  public static registerScene(
+    ...scenes: SceneConstructor[]
+  ): typeof SceneManager {
+    for (const ctor of scenes) {
+      this._scenes.set(ctor.name, ctor);
+    }
+    return this;
   }
   /**
    * Runs the scene manager with the initial scene provided.
@@ -236,8 +258,9 @@ export class SceneManager {
       this._gui.add(Graphics, "fpsMeterVisible").name("show fps");
 
       let dropdown = {};
-      for (let s of Object.keys(scenes).sort()) {
-        dropdown[Object.assign(scenes)[s]["displayName"] ?? s] = s;
+      for (const [k, v] of this._scenes) {
+        const displayName = Object.assign(v)["displayName"] ?? k;
+        dropdown = Object.assign(dropdown, { [displayName]: k });
       }
 
       this._stageGui = this._gui.addFolder("stage");

@@ -1,6 +1,6 @@
 import * as lil from "lil-gui";
-import { DisplayableObject } from "../core/DisplayableObject";
-import { DataManager } from "./DataManager";
+import { DisplayableObject } from "@/core";
+import { DataManager } from "@/app";
 /**
  * An interface for constructing a scene.
  *
