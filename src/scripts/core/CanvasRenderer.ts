@@ -1,4 +1,4 @@
-import { DisplayableObject } from "./DisplayableObject";
+import { DisplayableObject } from "@/core";
 /**
  * Properties for creating canvas renderer class object.
  *

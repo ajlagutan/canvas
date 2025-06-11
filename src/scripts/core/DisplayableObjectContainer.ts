@@ -1,4 +1,4 @@
-import { DisplayableObject } from "./DisplayableObject";
+import { DisplayableObject } from "@/core";
 /**
  * A container class object for all kinds of displayable object.
  *
