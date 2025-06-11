@@ -2,7 +2,17 @@ import { defineConfig } from "vite"
 import { resolve } from "path"
 
 export default defineConfig({
-  root: resolve(__dirname, "src"),
+  root: "./src",
+  resolve: {
+    alias: {
+      "@/": resolve(__dirname, "./src"),
+      "@/app": resolve(__dirname, "./src/scripts/app"),
+      "@/core": resolve(__dirname, "./src/scripts/core"),
+      "@/core/ext": resolve(__dirname, "./src/scripts/core/extensions"),
+      "@/infra": resolve(__dirname, "./src/scripts/infra"),
+      "@/scenes": resolve(__dirname, "./src/scripts/scenes"),
+    }
+  },
   build: {
     outDir: "../docs",
     rollupOptions: {
@@ -15,4 +25,4 @@ export default defineConfig({
   server: {
     port: 8080
   }
-})
+});
