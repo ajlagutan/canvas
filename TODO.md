@@ -2,8 +2,6 @@
 
 ### Todo
 
-- [ ] Add Particle object class. [2025-06-02] ()  
-- [ ] Add Sprite object class. [2025-06-02] ()  
 - [ ] Add Vector4 object class. [2025-06-02] ()  
 - [ ] Add Vector3 object class. [2025-06-02] ()  
 - [ ] Add Vector2 object class. [2025-06-02] ()  
@@ -12,9 +10,13 @@
 
 ### In Progress
 
+- [ ] Add color utility functions. [2025-06-02] ()  
+- [ ] Add Sprite object class. [2025-06-02] ()  
+- [ ] Add Particle object class. [2025-06-02] ()  
 
 ### Done ✓
 
+- [x] Add Rectangle object class. [2025-06-02] (2025-06-11)  
 - [x] Restructure typescript code namespaces. [2025-05-27] (2025-05-27)  
 - [x] Add displayable object class. [2025-05-27] (2025-05-27)  
 - [x] Add displayable object container class. [2025-05-27] (2025-05-27)  
