@@ -2,8 +2,7 @@
 
 ### Todo
 
-- [ ] Add Vector4 object class. [2025-06-02] ()  
-- [ ] Add Vector3 object class. [2025-06-02] ()  
+- [ ] Update jsMath extension module. [2025-06-11] ()  
 - [ ] Add mouse input module. [2025-05-27] ()  
 - [ ] Add keyboard input module. [2025-05-27] ()  
 
@@ -14,6 +13,8 @@
 
 ### Done ✓
 
+- [x] Add Vector3 object class. [2025-06-02] (2025-06-11)  
+- [x] Add Vector4 object class. [2025-06-02] (2025-06-11)  
 - [x] Add Vector2 object class. [2025-06-02] (2025-06-11)  
 - [x] Add color utility functions. [2025-06-02] (2025-06-11)  
 - [x] Add Rectangle object class. [2025-06-02] (2025-06-11)  

@@ -10,3 +10,5 @@ export * from "./DisplayableObjectContainer";
 export * from "./Graphics";
 export * from "./Rectangle";
 export * from "./Vector2";
+export * from "./Vector3";
+export * from "./Vector4";
