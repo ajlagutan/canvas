@@ -1,6 +1,6 @@
 import "../scss/styles.scss";
 
-import { SceneManager } from "./infra/SceneManager";
+import { SceneManager } from "@/infra";
 
 (function () {
   SceneManager.run();
