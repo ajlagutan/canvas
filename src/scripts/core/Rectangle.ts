@@ -7,14 +7,14 @@
  */
 export class Rectangle {
   private static _empty: Rectangle = new Rectangle(0, 0, 0, 0);
-  private _bottom: number = 0;
-  private _height: number = 0;
-  private _left: number = 0;
-  private _right: number = 0;
-  private _top: number = 0;
-  private _width: number = 0;
-  private _x: number = 0;
-  private _y: number = 0;
+  private _bottom: number;
+  private _height: number;
+  private _left: number;
+  private _right: number;
+  private _top: number;
+  private _width: number;
+  private _x: number;
+  private _y: number;
   /**
    * Initializes a new instance of the {@linkcode Rectangle} object.
    *
@@ -26,10 +26,14 @@ export class Rectangle {
    * @param height The value to assign to the {@linkcode height} component of the rectangle.
    */
   constructor(x?: number, y?: number, width?: number, height?: number) {
-    this.x = x ?? 0;
-    this.y = y ?? 0;
-    this.width = width ?? 0;
-    this.height = height ?? 0;
+    this._x = x ?? 0;
+    this._y = y ?? 0;
+    this._width = width ?? 0;
+    this._height = height ?? 0;
+    this._left = this._x;
+    this._top = this._y;
+    this._right = this._x + this._width;
+    this._bottom = this._y + this._height;
   }
   /**
    * Represents an empty {@linkcode Rectangle} object.
