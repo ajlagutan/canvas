@@ -1,7 +1,5 @@
 import "fpsmeter";
-import { clamp, logger, mod } from "./_utils";
-import { CanvasRenderer } from "./CanvasRenderer";
-import { DisplayableObject } from "./DisplayableObject";
+import { CanvasRenderer, DisplayableObject, logger } from "@/core";
 /**
  * The loading display text.
  *
@@ -444,7 +442,7 @@ export class Graphics {
       if (context) {
         let dx = this._width / 2;
         let dy = this._height / 2;
-        let alpha = clamp((this._loadingCount - 20) / 30, 0, 1);
+        let alpha = Math.clamp((this._loadingCount - 20) / 30, 0, 1);
         context.save();
         context.globalAlpha = alpha;
         context.font = "bold 24pt monospace";
