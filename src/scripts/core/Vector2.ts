@@ -13,15 +13,15 @@ export class Vector2 {
    *
    *
    *
-   * @param x The value to assign to the X component of the vector object.
-   * @param y The value to assign to the Y component of the vector object.
+   * @param x The value to assign to the X component of the {@linkcode Vector2} object.
+   * @param y The value to assign to the Y component of the {@linkcode Vector2} object.
    */
   constructor(x?: number, y?: number) {
     this._x = x ?? 0;
     this._y = y ?? 0;
   }
   /**
-   * Gets or sets the X component of the vector.
+   * Gets or sets the value of X component of the current {@linkcode Vector2} object.
    *
    *
    *
@@ -37,7 +37,7 @@ export class Vector2 {
     }
   }
   /**
-   * Gets or sets the Y component of the vector.
+   * Gets or sets the value of Y component of the current {@linkcode Vector2} object.
    *
    *
    *
