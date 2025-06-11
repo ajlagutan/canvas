@@ -11,10 +11,10 @@
 
 - [ ] Add Sprite object class. [2025-06-02] ()  
 - [ ] Add Particle object class. [2025-06-02] ()  
-- [ ] Add Vector2 object class. [2025-06-02] ()  
 
 ### Done ✓
 
+- [x] Add Vector2 object class. [2025-06-02] (2025-06-11)  
 - [x] Add color utility functions. [2025-06-02] (2025-06-11)  
 - [x] Add Rectangle object class. [2025-06-02] (2025-06-11)  
 - [x] Restructure typescript code namespaces. [2025-05-27] (2025-05-27)  
