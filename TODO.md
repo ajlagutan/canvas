@@ -7,6 +7,7 @@
 
 ### In Progress
 
+- [ ] Update color translator module. [2025-06-12] ()  
 - [ ] Add Sprite object class. [2025-06-02] ()  
 - [ ] Add Particle object class. [2025-06-02] ()  
 
