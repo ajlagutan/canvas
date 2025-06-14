@@ -37,4 +37,17 @@ export class Vector3 extends Vector2 {
       this._z = value;
     }
   }
+  /**
+   * Returns a new instance of {@linkcode Vector3} object with zero value for X, Y, and Z components.
+   * 
+   * 
+   * 
+   * @public
+   * @static
+   * @method
+   * @returns A new instance of {@link Vector3} object.
+   */
+  public static empty(): Vector3 {
+    return new Vector3();
+  }
 }

@@ -52,4 +52,17 @@ export class Vector2 {
       this._y = value;
     }
   }
+  /**
+   * Returns a new instance of {@linkcode Vector2} object with zero value for X and Y components.
+   * 
+   * 
+   * 
+   * @public
+   * @static
+   * @method
+   * @returns A new instance of {@link Vector2} object.
+   */
+  public static empty(): Vector2 {
+    return new Vector2();
+  }
 }
