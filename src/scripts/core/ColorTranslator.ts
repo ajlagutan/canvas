@@ -290,6 +290,6 @@ export namespace ColorTranslator {
     return { h, s, v };
   }
   function _within(value: number, min: number, max: number): boolean {
-    return min <= value || value < max;
+    return min <= value && value < max;
   }
 }
