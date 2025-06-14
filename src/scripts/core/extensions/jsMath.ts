@@ -21,6 +21,18 @@ declare global {
      */
     degree(radian: number): number;
     /**
+     * Returns the distance between a two point coordinates in a 2D plane.
+     * 
+     * 
+     * 
+     * @param x1 The value of the first X-coordinate in a 2D plane.
+     * @param y1 The value of the first Y-coordinate in a 2D plane.
+     * @param x2 The value of the second X-coordinate in a 2D plane.
+     * @param y2 The value of the second Y-coordinate in a 2D plane.
+     * @returns The distance between a two point coordinates.
+     */
+    distance(x1: number, y1: number, x2: number, y2: number): number;
+    /**
      * Calculates the remainder of {@linkcode x} divided by {@linkcode y}.
      *
      *
@@ -86,6 +98,12 @@ Math.clamp = function (value: number, min: number, max: number): number {
 Math.degree = function (radian: number): number {
   return radian * (180 / Math.PI);
 };
+
+Math.distance = function (x1: number, y1: number, x2: number, y2: number): number {
+  let dx = x2 - x1;
+  let dy = y2 - y1;
+  return Math.sqrt(dx * dx + dy * dy);
+}
 
 Math.mod = function (x: number, y: number): number {
   return ((x % y) + y) % y;
