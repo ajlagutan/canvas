@@ -16,7 +16,7 @@ export namespace ColorTranslator {
   /**
    * An object representing a CMYK structure.
    */
-  type cmyk = {
+  export type cmyk = {
     /**
      * The Cyan component of the CMYK structure.
      * @property
@@ -41,7 +41,7 @@ export namespace ColorTranslator {
   /**
    * An object representing an HSL structure.
    */
-  type hsl = {
+  export type hsl = {
     /**
      * The Hue component of the HSL structure.
      * @property
@@ -61,7 +61,7 @@ export namespace ColorTranslator {
   /**
    * An object representing an HSV structure.
    */
-  type hsv = {
+  export type hsv = {
     /**
      * The Hue component of the HSV structure.
      * @property
@@ -81,7 +81,7 @@ export namespace ColorTranslator {
   /**
    * An object representing an RGB structure.
    */
-  type rgb = {
+  export type rgb = {
     /**
      * The Red component of the RGB structure.
      * @property
@@ -121,6 +121,26 @@ export namespace ColorTranslator {
     return { r, g, b };
   }
   /**
+   * Converts an HSL values to an HSV values.
+   *
+   *
+   *
+   * @param parameters An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode l} values.
+   * @returns An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode v} values.
+   */
+  export function hsl_to_hsv(parameters: hsl): hsv {
+    let { h, s, l } = parameters;
+
+    h = Math.clamp(h, 0, 1);
+    s = Math.clamp(s, 0, 1);
+    l = Math.clamp(l, 0, 1);
+
+    let v = l + s * Math.min(l, 1 - l);
+    let sv = v === 0 ? 0 : 2 - (2 * l) / v;
+
+    return { h, s: sv, v };
+  }
+  /**
    * Converts an HSL values to an RGB values.
    *
    *
@@ -153,6 +173,26 @@ export namespace ColorTranslator {
     let b = values[2] + m;
 
     return { r, g, b };
+  }
+  /**
+   * Converts an HSV values to an HSL values.
+   *
+   *
+   *
+   * @param parameters An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode v} values.
+   * @returns An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode l} values.
+   */
+  export function hsv_to_hsl(parameters: hsv): hsl {
+    let { h, s, v } = parameters;
+
+    h = Math.clamp(h, 0, 1);
+    s = Math.clamp(s, 0, 1);
+    v = Math.clamp(v, 0, 1);
+
+    let l = v - (v * s) / 2;
+    let sl = l === 0 || l === 1 ? 0 : (v - l) / Math.min(l, 1 - l);
+
+    return { h, s: sl, l };
   }
   /**
    * Converts an HSV values to an RGB values.
