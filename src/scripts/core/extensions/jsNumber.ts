@@ -82,13 +82,15 @@ declare global {
 export {};
 
 Number.prototype.clamp = function (min: number, max: number): number {
-  return Math.clamp(this, min, max);
+  return Math.clamp(this.valueOf(), min, max);
 };
 
 Number.prototype.within = function (min: number, max: number): boolean {
-  return min < this || this < max;
+  const value = this.valueOf();
+  return min < value && value < max;
 }
 
 Number.prototype.withinInclusive = function (min: number, max: number): boolean {
-  return min <= this || this <= max;
+  const value = this.valueOf();
+  return min <= value && value <= max;
 }
