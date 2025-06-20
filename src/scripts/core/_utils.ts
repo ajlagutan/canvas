@@ -17,6 +17,16 @@ export namespace logger {
     console.debug(`[${this.name}]`, ...data);
   }
   /**
+   * Error level log.
+   *
+   *
+   *
+   * @param data The data to write to the browser console.
+   */
+  export function error(this: any, ...data: any[]): void {
+    console.error(`[${this.name}]`, ...data);
+  }
+  /**
    * Information level log.
    *
    *
@@ -27,13 +37,13 @@ export namespace logger {
     console.info(`[${this.name}]`, ...data);
   }
   /**
-   * Error level log.
-   *
-   *
-   *
+   * Warning level log.
+   * 
+   * 
+   * 
    * @param data The data to write to the browser console.
    */
-  export function error(this: any, ...data: any[]): void {
-    console.error(`[${this.name}]`, ...data);
+  export function warn(this: any, ...data: any[]): void {
+    console.warn(`[${this.name}]`, ...data);
   }
 }
