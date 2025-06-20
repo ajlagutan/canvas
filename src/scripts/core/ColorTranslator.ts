@@ -112,11 +112,11 @@ export namespace ColorTranslator {
    *
    *
    *
-   * @param parameters An object representing the {@linkcode c}, {@linkcode m}, {@linkcode y}, and {@linkcode k} values.
+   * @param components An object representing the {@linkcode c}, {@linkcode m}, {@linkcode y}, and {@linkcode k} values.
    * @returns An object representing the {@linkcode r}, {@linkcode g}, and {@linkcode b} values.
    */
-  export function cmyk_to_rgb(parameters: cmyk): rgb {
-    let { c, m, y, k } = parameters;
+  export function cmyk_to_rgb(components: cmyk): rgb {
+    let { c, m, y, k } = components;
 
     c = Math.clamp(c, 0, 1);
     m = Math.clamp(m, 0, 1);
@@ -130,15 +130,34 @@ export namespace ColorTranslator {
     return { r, g, b };
   }
   /**
+   * Returns a string representation of the CMYK color space.
+   *
+   *
+   *
+   * @param components The normalized CMYK components to convert to string.
+   * @returns A string representation of the CMYK color space.
+   */
+  export function cmyk_to_str(components: cmyk): string {
+    if (verbose) {
+      logger.warn(
+        "Converting CMYK model to string is not recommended. " +
+          "Try using RGB model if string conversion is needed."
+      );
+    }
+    let rgb = cmyk_to_rgb(components);
+
+    return rgb_to_str(rgb);
+  }
+  /**
    * Converts an HSL values to an HSV values.
    *
    *
    *
-   * @param parameters An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode l} values.
+   * @param components An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode l} values.
    * @returns An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode v} values.
    */
-  export function hsl_to_hsv(parameters: hsl): hsv {
-    let { h, s, l } = parameters;
+  export function hsl_to_hsv(components: hsl): hsv {
+    let { h, s, l } = components;
 
     h = Math.clamp(h, 0, 1);
     s = Math.clamp(s, 0, 1);
@@ -154,11 +173,11 @@ export namespace ColorTranslator {
    *
    *
    *
-   * @param parameters An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode l} values.
+   * @param components An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode l} values.
    * @returns An object representing the {@linkcode r}, {@linkcode g}, and {@linkcode b} values.
    */
-  export function hsl_to_rgb(parameters: hsl): rgb {
-    let { h, s, l } = parameters;
+  export function hsl_to_rgb(components: hsl): rgb {
+    let { h, s, l } = components;
 
     h = Math.clamp(h, 0, 1);
     s = Math.clamp(s, 0, 1);
@@ -170,12 +189,12 @@ export namespace ColorTranslator {
     let X = C * (1 - Math.abs(((h / hue1) % 2) - 1));
     let m = l - C / 2;
 
-    if (_within(h, hue0, hue1)) values = [C, X, 0];
-    if (_within(h, hue1, hue2)) values = [X, C, 0];
-    if (_within(h, hue2, hue3)) values = [0, C, X];
-    if (_within(h, hue3, hue4)) values = [0, X, C];
-    if (_within(h, hue4, hue5)) values = [X, 0, C];
-    if (_within(h, hue5, hue6)) values = [C, 0, X];
+    if (within(h, hue0, hue1)) values = [C, X, 0];
+    if (within(h, hue1, hue2)) values = [X, C, 0];
+    if (within(h, hue2, hue3)) values = [0, C, X];
+    if (within(h, hue3, hue4)) values = [0, X, C];
+    if (within(h, hue4, hue5)) values = [X, 0, C];
+    if (within(h, hue5, hue6)) values = [C, 0, X];
 
     let r = values[0] + m;
     let g = values[1] + m;
@@ -184,15 +203,35 @@ export namespace ColorTranslator {
     return { r, g, b };
   }
   /**
+   * Returns a string representation of the HSL color space.
+   *
+   *
+   *
+   * @param components The normalized HSL components to convert to string.
+   * @param alpha The normalized Alpha component to include.
+   * @returns A string representation of the HSL color space.
+   */
+  export function hsl_to_str(components: hsl, alpha: number = 1): string {
+    let { h, s, l } = components;
+
+    let alphaStr = Math.clamp(alpha, 0, 1).toFixed(4);
+
+    let hs = Math.floor(Math.clamp(h, 0, 1) * 360).toFixed(1);
+    let ss = Math.floor(Math.clamp(s, 0, 1) * 100).toFixed(1);
+    let ls = Math.floor(Math.clamp(l, 0, 1) * 100).toFixed(1);
+
+    return `hsl(${hs} ${ss}% ${ls}% / ${alphaStr})`;
+  }
+  /**
    * Converts an HSV values to an HSL values.
    *
    *
    *
-   * @param parameters An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode v} values.
+   * @param components An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode v} values.
    * @returns An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode l} values.
    */
-  export function hsv_to_hsl(parameters: hsv): hsl {
-    let { h, s, v } = parameters;
+  export function hsv_to_hsl(components: hsv): hsl {
+    let { h, s, v } = components;
 
     h = Math.clamp(h, 0, 1);
     s = Math.clamp(s, 0, 1);
@@ -208,10 +247,12 @@ export namespace ColorTranslator {
    *
    *
    *
-   * @param parameters An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode v} values.
+   * @param components An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode v} values.
    * @returns An object representing the {@linkcode r}, {@linkcode g}, and {@linkcode b} values.
    */
-  export function hsv_to_rgb({ h, s, v }: hsv): rgb {
+  export function hsv_to_rgb(components: hsv): rgb {
+    let { h, s, v } = components;
+
     h = Math.clamp(h, 0, 1);
     s = Math.clamp(s, 0, 1);
     v = Math.clamp(v, 0, 1);
@@ -222,12 +263,12 @@ export namespace ColorTranslator {
     let X = C * (1 - Math.abs(((h / hue1) % 2) - 1));
     let m = v - C;
 
-    if (_within(h, hue0, hue1)) values = [C, X, 0];
-    if (_within(h, hue1, hue2)) values = [X, C, 0];
-    if (_within(h, hue2, hue3)) values = [0, C, X];
-    if (_within(h, hue3, hue4)) values = [0, X, C];
-    if (_within(h, hue4, hue5)) values = [X, 0, C];
-    if (_within(h, hue5, hue6)) values = [C, 0, X];
+    if (within(h, hue0, hue1)) values = [C, X, 0];
+    if (within(h, hue1, hue2)) values = [X, C, 0];
+    if (within(h, hue2, hue3)) values = [0, C, X];
+    if (within(h, hue3, hue4)) values = [0, X, C];
+    if (within(h, hue4, hue5)) values = [X, 0, C];
+    if (within(h, hue5, hue6)) values = [C, 0, X];
 
     let r = values[0] + m;
     let g = values[1] + m;
@@ -236,14 +277,37 @@ export namespace ColorTranslator {
     return { r, g, b };
   }
   /**
+   * Returns a string representation of the HSV color space.
+   *
+   *
+   *
+   * @param components The normalized HSV components to convert to string.
+   * @param alpha The normalized Alpha component to include.
+   * @returns A string representation of the HSV color space.
+   */
+  export function hsv_to_str(components: hsv, alpha: number = 1): string {
+    if (verbose) {
+      logger.warn(
+        "Converting HSV model to string is not recommended. " +
+          "Try using HSL model if string conversion is needed."
+      );
+    }
+    let { h, s, v } = components;
+    let hsl = hsv_to_hsl({ h, s, v });
+
+    return hsl_to_str(hsl, alpha);
+  }
+  /**
    * Converts an RGB values to a CMYK values.
    *
    *
    *
-   * @param parameters An object representing the {@linkcode r}, {@linkcode g}, and {@linkcode b} values.
+   * @param components An object representing the {@linkcode r}, {@linkcode g}, and {@linkcode b} values.
    * @returns An object representing the {@linkcode c}, {@linkcode m}, {@linkcode y}, and {@linkcode k} values.
    */
-  export function rgb_to_cmyk({ r, g, b }: rgb): cmyk {
+  export function rgb_to_cmyk(components: rgb): cmyk {
+    let { r, g, b } = components;
+
     r = Math.clamp(r, 0, 1);
     g = Math.clamp(g, 0, 1);
     b = Math.clamp(b, 0, 1);
@@ -267,10 +331,12 @@ export namespace ColorTranslator {
    *
    *
    *
-   * @param parameters An object representing the {@linkcode r}, {@linkcode g}, and {@linkcode b} values.
+   * @param components An object representing the {@linkcode r}, {@linkcode g}, and {@linkcode b} values.
    * @returns An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode l} values.
    */
-  export function rgb_to_hsl({ r, g, b }: rgb): hsl {
+  export function rgb_to_hsl(components: rgb): hsl {
+    let { r, g, b } = components;
+
     r = Math.clamp(r, 0, 1);
     g = Math.clamp(g, 0, 1);
     b = Math.clamp(b, 0, 1);
@@ -305,10 +371,12 @@ export namespace ColorTranslator {
    *
    *
    *
-   * @param parameters An object representing the {@linkcode r}, {@linkcode g}, and {@linkcode b} values.
+   * @param components An object representing the {@linkcode r}, {@linkcode g}, and {@linkcode b} values.
    * @returns An object representing the {@linkcode h}, {@linkcode s}, and {@linkcode v} values.
    */
-  export function rgb_to_hsv({ r, g, b }: rgb): hsv {
+  export function rgb_to_hsv(components: rgb): hsv {
+    let { r, g, b } = components;
+
     r = Math.clamp(r, 0, 1);
     g = Math.clamp(g, 0, 1);
     b = Math.clamp(b, 0, 1);
@@ -338,7 +406,38 @@ export namespace ColorTranslator {
 
     return { h, s, v };
   }
-  function _within(value: number, min: number, max: number): boolean {
+  /**
+   * Returns a string representation of the RGB color space.
+   *
+   *
+   *
+   * @param components The normalized RGB components to convert to string.
+   * @param alpha The normalized Alpha component to include.
+   * @returns A string representation of the RGB color space.
+   */
+  export function rgb_to_str(components: rgb, alpha: number = 1): string {
+    let { r, g, b } = components;
+
+    let alphaStr = Math.clamp(alpha, 0, 1).toFixed(4);
+
+    let rs = Math.floor(Math.clamp(r, 0, 1) * 255).toFixed(0);
+    let gs = Math.floor(Math.clamp(g, 0, 1) * 255).toFixed(0);
+    let bs = Math.floor(Math.clamp(b, 0, 1) * 255).toFixed(0);
+
+    return `rgb(${rs} ${gs} ${bs} / ${alphaStr})`;
+  }
+  /**
+   * Determines whether the {@linkcode value} is within
+   * the {@linkcode min} (inclusive) and {@linkcode max} (exclusive) values.
+   *
+   *
+   *
+   * @param value The value to determine.
+   * @param min The minimum value, inclusive.
+   * @param max The maximum value, exclusive.
+   * @returns true, if {@linkcode value} is within the {@linkcode min} (inclusive) and {@linkcode max} (exclusive) values; otherwise, false.
+   */
+  function within(value: number, min: number, max: number): boolean {
     return min <= value && value < max;
   }
 }
