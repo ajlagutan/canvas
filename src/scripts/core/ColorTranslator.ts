@@ -1,3 +1,4 @@
+import { logger } from "./_utils";
 /**
  * Contains utility functions for translating color models.
  *
