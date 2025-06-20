@@ -1,16 +1,16 @@
-import { ColorTranslator } from "@/core"
+import { ColorTranslator, logger } from "@/core";
 /**
  * Color models that is supported by this code.
- * 
- * 
- * 
+ *
+ *
+ *
  * @enum
  */
 enum COLOR_MODEL {
   RGB = 0,
   HSL = 1,
   HSV = 2,
-  CMY = 3,
+  CMYK = 3,
 }
 /**
  * Represents color object that holds four single-precision floating point components.
@@ -32,9 +32,9 @@ export class Color {
   private _z: number;
   /**
    * Initializes a new instance of the {@linkcode Color} object.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @private
    * @constructor
    * @param m The color model value to assign to the structure.
@@ -59,9 +59,9 @@ export class Color {
   /**
    * Represents a transparent {@linkcode Color} object.
    * This field is read-only.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @static
    * @readonly
    * @property
@@ -72,54 +72,54 @@ export class Color {
   }
   /**
    * Gets the alpha component value of the {@linkcode Color} object.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @readonly
    * @property
    * @returns The alpha component value.
    */
   public get w(): number {
-    let factor = 1;
-    if (this.isCMYK()) factor = 100;
-    return Math.floor(this._w * factor);
+    if (this.isCMYK()) return this._w * 100;
+    return this._w;
   }
   /**
    * Gets the X component value of the {@linkcode Color} object.
    * - {@linkcode x} component value is Red, if model is RGB. (0 .. 255)
    * - {@linkcode x} component value is Hue, if model is HSL/V. (0 .. 360)
    * - {@linkcode x} component value is Cyan, if model is CMYK. (0 .. 100)
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @readonly
    * @property
    * @returns The X component value.
    */
   public get x(): number {
-    let factor = 0;
-    if (this.isRGB()) factor = 255;
-    else if (this.isHSL() || this.isHSV()) factor = 360;
-    else if (this.isCMYK()) factor = 100;
-    return Math.floor(this._x * factor);
+    if (this.isCMYK()) return this._x * 100;
+    if (this.isHSL()) return this._x * 360;
+    if (this.isHSV()) return this._x * 360;
+    if (this.isRGB()) return this._x * 255;
+    return this._x * 0;
   }
   /**
    * Gets the Y component value of the {@linkcode Color} object.
    * - {@linkcode y} component value is Green, if model is RGB. (0 .. 255)
    * - {@linkcode y} component value is Saturation, if model is HSL/V. (0 .. 100)
    * - {@linkcode y} component value is Magenta, if model is CMYK. (0 .. 100)
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @readonly
    * @property
    * @returns The Y component value.
    */
   public get y(): number {
-    let factor = 0;
-    if (this.isRGB()) factor = 255;
-    else if (this.isHSL() || this.isHSV() || this.isCMYK()) factor = 100;
-    return Math.floor(this._y * factor);
+    if (this.isCMYK()) return this._y * 100;
+    if (this.isHSL()) return this._y * 100;
+    if (this.isHSV()) return this._y * 100;
+    if (this.isRGB()) return this._y * 255;
+    return this._y * 0;
   }
   /**
    * Gets the Z component value of the {@linkcode Color} object.
@@ -127,24 +127,25 @@ export class Color {
    * - {@linkcode z} component value is Lightness, if model is HSL. (0 .. 100)
    * - {@linkcode z} component value is Value, if model is HSV. (0 .. 100)
    * - {@linkcode z} component value is Yellow, if model is CMYK. (0 .. 100)
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @readonly
    * @property
    * @returns The Z component value.
    */
   public get z(): number {
-    let factor = 0;
-    if (this.isRGB()) factor = 255;
-    else if (this.isHSL() || this.isHSV() || this.isCMYK()) factor = 100;
-    return Math.floor(this._z * factor);
+    if (this.isCMYK()) return this._z * 100;
+    if (this.isHSL()) return this._z * 100;
+    if (this.isHSV()) return this._z * 100;
+    if (this.isRGB()) return this._z * 255;
+    return this._z * 0;
   }
   /**
    * Creates a new {@linkcode Color} object that has a CMYK structure.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @param c The value to assign to the Cyan component of the CMYK structure.
    * @param m The value to assign to the Magenta component of the CMYK structure.
    * @param y The value to assign to the Yellow component of the CMYK structure.
@@ -156,13 +157,13 @@ export class Color {
     m = Math.clamp(m / 100, 0, 1);
     y = Math.clamp(y / 100, 0, 1);
     k = Math.clamp(k / 100, 0, 1);
-    return new Color(COLOR_MODEL.CMY, c, m, y, k);
+    return new Color(COLOR_MODEL.CMYK, c, m, y, k);
   }
   /**
    * Creates a new {@linkcode Color} object that has an HSL structure.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @param h The value to assign to the Hue component of the HSL structure.
    * @param s The value to assign to the Saturation component of the HSL structure.
    * @param l The value to assign to the Lightness component of the HSL structure.
@@ -173,9 +174,9 @@ export class Color {
   }
   /**
    * Creates a new {@linkcode Color} object that has an HSL/A structure.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @param h The value to assign to the Hue component of the HSL/A structure.
    * @param s The value to assign to the Saturation component of the HSL/A structure.
    * @param l The value to assign to the Lightness component of the HSL/A structure.
@@ -191,9 +192,9 @@ export class Color {
   }
   /**
    * Creates a new {@linkcode Color} object that has an HSV structure.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @param h The value to assign to the Hue component of the HSV structure.
    * @param s The value to assign to the Saturation component of the HSV structure.
    * @param v The value to assign to the Value component of the HSV structure.
@@ -204,9 +205,9 @@ export class Color {
   }
   /**
    * Creates a new {@linkcode Color} object that has an HSV/A structure.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @param h The value to assign to the Hue component of the HSV/A structure.
    * @param s The value to assign to the Saturation component of the HSV/A structure.
    * @param v The value to assign to the Value component of the HSV/A structure.
@@ -222,9 +223,9 @@ export class Color {
   }
   /**
    * Creates a new {@linkcode Color} object that has an RGB structure.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @param r The value to assign to the Red component of the RGB structure.
    * @param g The value to assign to the Green component of the RGB structure.
    * @param b The value to assign to the Blue component of the RGB structure.
@@ -235,9 +236,9 @@ export class Color {
   }
   /**
    * Creates a new {@linkcode Color} object that has an RGB/A structure.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @param r The value to assign to the Red component of the RGB/A structure.
    * @param g The value to assign to the Green component of the RGB/A structure.
    * @param b The value to assign to the Blue component of the RGB/A structure.
@@ -253,9 +254,9 @@ export class Color {
   }
   /**
    * Creates a new {@linkcode Color} object that is a copy of the current instance.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @returns A new {@linkcode Color} object that is a copy of this instance.
    */
   public clone(): Color {
@@ -263,105 +264,191 @@ export class Color {
   }
   /**
    * Converts the current instance to a new {@linkcode Color} object that has a CMYK structure.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @throws Converting to CMYK is not supported.
    * @returns A new {@linkcode Color} object that has a CMYK structure.
    */
   public toCMYK(): Color {
     if (this.isCMYK()) {
-      return this;
+      return this.clone();
+    }
+    if (this.isHSL()) {
+      const source = { h: this._x, s: this._y, l: this._z };
+      const rgb = ColorTranslator.hsl_to_rgb(source);
+      const cmyk = ColorTranslator.rgb_to_cmyk(rgb);
+      return new Color(COLOR_MODEL.CMYK, cmyk.c, cmyk.m, cmyk.y, cmyk.k);
+    }
+    if (this.isHSV()) {
+      const source = { h: this._x, s: this._y, v: this._z };
+      const rgb = ColorTranslator.hsv_to_rgb(source);
+      const cmyk = ColorTranslator.rgb_to_cmyk(rgb);
+      return new Color(COLOR_MODEL.CMYK, cmyk.c, cmyk.m, cmyk.y, cmyk.k);
     }
     if (this.isRGB()) {
       const source = { r: this._x, g: this._y, b: this._z };
-      const result = ColorTranslator.rgb_to_cmyk(source);
-      return new Color(COLOR_MODEL.CMY, result.c, result.m, result.y, result.k);
+      const cmyk = ColorTranslator.rgb_to_cmyk(source);
+      return new Color(COLOR_MODEL.CMYK, cmyk.c, cmyk.m, cmyk.y, cmyk.k);
     }
-    throw new Error("Converting to CMYK is not supported.");
+    logger.error.call(this, "Converting to CMYK is not supported.");
+    return Color.transparent;
   }
   /**
    * Converts the current instance to a new {@linkcode Color} object that has an HSL structure.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @throws Converting to HSL is not supported.
    * @returns A new {@linkcode Color} object that has an HSL structure.
    */
   public toHSL(): Color {
     if (this.isHSL()) {
-      return this;
+      return this.clone();
+    }
+    if (this.isCMYK()) {
+      const source = { c: this._x, m: this._y, y: this._z, k: this._w };
+      const rgb = ColorTranslator.cmyk_to_rgb(source);
+      const hsl = ColorTranslator.rgb_to_hsl(rgb);
+      return new Color(COLOR_MODEL.HSL, hsl.h, hsl.s, hsl.l);
+    }
+    if (this.isHSV()) {
+      const source = { h: this._x, s: this._y, v: this._z };
+      const hsl = ColorTranslator.hsv_to_hsl(source);
+      return new Color(COLOR_MODEL.HSL, hsl.h, hsl.s, hsl.l);
     }
     if (this.isRGB()) {
       const source = { r: this._x, g: this._y, b: this._z };
-      const result = ColorTranslator.rgb_to_hsl(source);
-      return new Color(COLOR_MODEL.HSL, result.h, result.s, result.l);
+      const hsl = ColorTranslator.rgb_to_hsl(source);
+      return new Color(COLOR_MODEL.HSL, hsl.h, hsl.s, hsl.l);
     }
-    throw new Error("Converting to HSL is not supported.");
+    logger.error.call(this, "Converting to HSL is not supported.");
+    return Color.transparent;
   }
   /**
    * Converts the current instance to a new {@linkcode Color} object that has an HSV structure.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @throws Converting to HSV is not supported.
    * @returns A new {@linkcode Color} object that has an HSV structure.
    */
   public toHSV(): Color {
     if (this.isHSV()) {
-      return this;
+      return this.clone();
+    }
+    if (this.isCMYK()) {
+      const source = { c: this._x, m: this._y, y: this._z, k: this._w };
+      const rgb = ColorTranslator.cmyk_to_rgb(source);
+      const hsv = ColorTranslator.rgb_to_hsv(rgb);
+      return new Color(COLOR_MODEL.HSV, hsv.h, hsv.s, hsv.v);
+    }
+    if (this.isHSL()) {
+      const source = { h: this._x, s: this._y, l: this._z };
+      const hsv = ColorTranslator.hsl_to_hsv(source);
+      return new Color(COLOR_MODEL.HSV, hsv.h, hsv.s, hsv.v);
     }
     if (this.isRGB()) {
       const source = { r: this._x, g: this._y, b: this._z };
-      const result = ColorTranslator.rgb_to_hsv(source);
-      return new Color(COLOR_MODEL.HSL, result.h, result.s, result.v);
+      const hsv = ColorTranslator.rgb_to_hsv(source);
+      return new Color(COLOR_MODEL.HSV, hsv.h, hsv.s, hsv.v);
     }
-    throw new Error("Converting to HSV is not supported.");
+    logger.error.call(this, "Converting to HSV is not supported.");
+    return Color.transparent;
   }
   /**
    * Converts the current instance to a new {@linkcode Color} object that has an RGB structure.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @throws Converting to RGB is not supported.
    * @returns A new {@linkcode Color} object that has an RGB structure.
    */
   public toRGB(): Color {
     if (this.isRGB()) {
-      return this;
+      return this.clone();
     }
     if (this.isCMYK()) {
       const source = { c: this._x, m: this._y, y: this._z, k: this._w };
-      const result = ColorTranslator.cmyk_to_rgb(source);
-      return new Color(COLOR_MODEL.RGB, result.r, result.g, result.b);
+      const rgb = ColorTranslator.cmyk_to_rgb(source);
+      return new Color(COLOR_MODEL.RGB, rgb.r, rgb.g, rgb.b);
     }
     if (this.isHSL()) {
       const source = { h: this._x, s: this._y, l: this._z };
-      const result = ColorTranslator.hsl_to_rgb(source);
-      return new Color(COLOR_MODEL.RGB, result.r, result.g, result.b);
+      const rgb = ColorTranslator.hsl_to_rgb(source);
+      return new Color(COLOR_MODEL.RGB, rgb.r, rgb.g, rgb.b);
     }
     if (this.isHSV()) {
       const source = { h: this._x, s: this._y, v: this._z };
-      const result = ColorTranslator.hsv_to_rgb(source);
-      return new Color(COLOR_MODEL.RGB, result.r, result.g, result.b);
+      const rgb = ColorTranslator.hsv_to_rgb(source);
+      return new Color(COLOR_MODEL.RGB, rgb.r, rgb.g, rgb.b);
     }
-    throw new Error("Converting to RGB is not supported.");
+    logger.error.call(this, "Converting to RGB is not supported.");
+    return Color.transparent;
+  }
+  /**
+   * Returns a string that represents the current {@linkcode Color} object.
+   *
+   *
+   *
+   * @returns A string that represents the current {@linkcode Color} object.
+   */
+  public toString(): string {
+    if (this.isCMYK()) {
+      return ColorTranslator.cmyk_to_str({
+        c: this._x,
+        m: this._y,
+        y: this._z,
+        k: this._w,
+      });
+    }
+    if (this.isHSL()) {
+      return ColorTranslator.hsl_to_str(
+        {
+          h: this._x,
+          s: this._y,
+          l: this._z,
+        },
+        this._w
+      );
+    }
+    if (this.isHSV()) {
+      return ColorTranslator.hsv_to_str(
+        {
+          h: this._x,
+          s: this._y,
+          v: this._z,
+        },
+        this._w
+      );
+    }
+    if (this.isRGB()) {
+      return ColorTranslator.rgb_to_str(
+        {
+          r: this._x,
+          g: this._y,
+          b: this._z,
+        },
+        this._w
+      );
+    }
+    return "transparent";
   }
   /**
    * Determines whether the current instance color model is CMYK.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @returns true, if the current instance color model is CMYK; otherwise, false.
    */
   private isCMYK(): boolean {
-    return this._m === COLOR_MODEL.CMY;
+    return this._m === COLOR_MODEL.CMYK;
   }
   /**
    * Determines whether the current instance color model is HSL.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @returns true, if the current instance color model is HSL; otherwise, false.
    */
   private isHSL(): boolean {
@@ -369,9 +456,9 @@ export class Color {
   }
   /**
    * Determines whether the current instance color model is HSV.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @returns true, if the current instance color model is HSV; otherwise, false.
    */
   private isHSV(): boolean {
@@ -379,9 +466,9 @@ export class Color {
   }
   /**
    * Determines whether the current instance color model is RGB.
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @returns true, if the current instance color model is RGB; otherwise, false.
    */
   private isRGB(): boolean {
