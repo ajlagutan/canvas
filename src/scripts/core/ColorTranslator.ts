@@ -14,6 +14,14 @@ export namespace ColorTranslator {
   const hue5 = 300 / 360;
   const hue6 = 360 / 360;
   /**
+   * Gets or sets the verbosity of {@linkcode ColorTranslator} namespace.
+   *
+   *
+   *
+   * @property
+   */
+  export let verbose: boolean = true;
+  /**
    * An object representing a CMYK structure.
    */
   export type cmyk = {
