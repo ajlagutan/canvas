@@ -14,6 +14,8 @@ export namespace ColorTranslator {
   const hue4 = 240 / 360;
   const hue5 = 300 / 360;
   const hue6 = 360 / 360;
+  let cmyk_to_str_warned: boolean = false;
+  let hsv_to_str_warned: boolean = false;
   /**
    * Gets or sets the verbosity of {@linkcode ColorTranslator} namespace.
    *
@@ -25,7 +27,7 @@ export namespace ColorTranslator {
   /**
    * An object representing a CMYK structure.
    */
-  export type cmyk = {
+  export interface cmyk {
     /**
      * The Cyan component of the CMYK structure.
      * @property
@@ -46,11 +48,11 @@ export namespace ColorTranslator {
      * @property
      */
     k: number;
-  };
+  }
   /**
    * An object representing an HSL structure.
    */
-  export type hsl = {
+  export interface hsl {
     /**
      * The Hue component of the HSL structure.
      * @property
@@ -66,11 +68,11 @@ export namespace ColorTranslator {
      * @property
      */
     l: number;
-  };
+  }
   /**
    * An object representing an HSV structure.
    */
-  export type hsv = {
+  export interface hsv {
     /**
      * The Hue component of the HSV structure.
      * @property
@@ -86,11 +88,11 @@ export namespace ColorTranslator {
      * @property
      */
     v: number;
-  };
+  }
   /**
    * An object representing an RGB structure.
    */
-  export type rgb = {
+  export interface rgb {
     /**
      * The Red component of the RGB structure.
      * @property
@@ -106,7 +108,43 @@ export namespace ColorTranslator {
      * @property
      */
     b: number;
-  };
+  }
+  /**
+   * Returns a denormalized representation of the CMYK components.
+   *
+   *
+   *
+   * @param components The CMYK components to be converted to a normalized values. (0..100)
+   * @returns A denormalized representation of the CMYK components.
+   */
+  export function cmyk_denormalize(components: cmyk): cmyk {
+    let { c, m, y, k } = components;
+
+    c = Math.floor(Math.clamp(c * 100, 0, 100));
+    m = Math.floor(Math.clamp(m * 100, 0, 100));
+    y = Math.floor(Math.clamp(y * 100, 0, 100));
+    k = Math.floor(Math.clamp(k * 100, 0, 100));
+
+    return { c, m, y, k };
+  }
+  /**
+   * Returns a normalized representation of the CMYK components.
+   *
+   *
+   *
+   * @param components The CMYK components to be converted to a normalized values. (0..1)
+   * @returns A normalized representation of the CMYK components.
+   */
+  export function cmyk_normalize(components: cmyk): cmyk {
+    let { c, m, y, k } = components;
+
+    c = Math.clamp(c / 100, 0, 1);
+    m = Math.clamp(m / 100, 0, 1);
+    y = Math.clamp(y / 100, 0, 1);
+    k = Math.clamp(k / 100, 0, 1);
+
+    return { c, m, y, k };
+  }
   /**
    * Converts a CMYK values to an RGB values.
    *
@@ -138,15 +176,59 @@ export namespace ColorTranslator {
    * @returns A string representation of the CMYK color space.
    */
   export function cmyk_to_str(components: cmyk): string {
-    if (verbose) {
+    if (verbose && !cmyk_to_str_warned) {
       logger.warn(
         "Converting CMYK model to string is not recommended. " +
           "Try using RGB model if string conversion is needed."
       );
+      cmyk_to_str_warned = true;
     }
     let rgb = cmyk_to_rgb(components);
 
     return rgb_to_str(rgb);
+  }
+  export function hex_to_rgb(value: string): rgb | undefined {
+    if (value === "") return undefined;
+    
+    value = value.indexOf("#") !== -1 ? value.substring(1) : value;
+
+    let int = parseInt(value, 16);
+
+    return int_to_rgb(int);
+  }
+  /**
+   * Returns a denormalized representation of the HSL components.
+   *
+   *
+   *
+   * @param components The HSL components to be converted to a normalized values. H (0..360) and SL (0..100)
+   * @returns A denormalized representation of the HSL components.
+   */
+  export function hsl_denormalize(components: hsl): hsl {
+    let { h, s, l } = components;
+
+    h = Math.floor(Math.clamp(h * 360, 0, 360));
+    s = Math.floor(Math.clamp(s * 100, 0, 100));
+    l = Math.floor(Math.clamp(l * 100, 0, 100));
+
+    return { h, s, l };
+  }
+  /**
+   * Returns a normalized representation of the HSL components.
+   *
+   *
+   *
+   * @param components The HSL components to be converted to a normalized values. (0..1)
+   * @returns A normalized representation of the HSL components.
+   */
+  export function hsl_normalize(components: hsl): hsl {
+    let { h, s, l } = components;
+
+    h = Math.clamp(h / 360, 0, 1);
+    s = Math.clamp(s / 100, 0, 1);
+    l = Math.clamp(l / 100, 0, 1);
+
+    return { h, s, l };
   }
   /**
    * Converts an HSL values to an HSV values.
@@ -223,6 +305,40 @@ export namespace ColorTranslator {
     return `hsl(${hs} ${ss}% ${ls}% / ${alphaStr})`;
   }
   /**
+   * Returns a denormalized representation of the HSV components.
+   *
+   *
+   *
+   * @param components The HSV components to be converted to a normalized values. H (0..360) and SL (0..100)
+   * @returns A denormalized representation of the HSV components.
+   */
+  export function hsv_denormalize(components: hsv): hsv {
+    let { h, s, v } = components;
+
+    h = Math.floor(Math.clamp(h * 360, 0, 360));
+    s = Math.floor(Math.clamp(s * 100, 0, 100));
+    v = Math.floor(Math.clamp(v * 100, 0, 100));
+
+    return { h, s, v };
+  }
+  /**
+   * Returns a normalized representation of the HSV components.
+   *
+   *
+   *
+   * @param components The HSV components to be converted to a normalized values. (0..1)
+   * @returns A normalized representation of the HSV components.
+   */
+  export function hsv_normalize(components: hsv): hsv {
+    let { h, s, v } = components;
+
+    h = Math.clamp(h / 360, 0, 1);
+    s = Math.clamp(s / 100, 0, 1);
+    v = Math.clamp(v / 100, 0, 1);
+
+    return { h, s, v };
+  }
+  /**
    * Converts an HSV values to an HSL values.
    *
    *
@@ -286,16 +402,65 @@ export namespace ColorTranslator {
    * @returns A string representation of the HSV color space.
    */
   export function hsv_to_str(components: hsv, alpha: number = 1): string {
-    if (verbose) {
+    if (verbose && !hsv_to_str_warned) {
       logger.warn(
         "Converting HSV model to string is not recommended. " +
           "Try using HSL model if string conversion is needed."
       );
+      hsv_to_str_warned = true;
     }
     let { h, s, v } = components;
     let hsl = hsv_to_hsl({ h, s, v });
 
     return hsl_to_str(hsl, alpha);
+  }
+  export function int_to_rgb(value: number): rgb | undefined {
+    if (value >= 0x00 && value <= 0xffffff) {
+      let r = (value >> 16) & 0xff;
+      let g = (value >> 8) & 0xff;
+      let b = value & 0xff;
+
+      r = Math.clamp(r, 0, 255);
+      g = Math.clamp(g, 0, 255);
+      b = Math.clamp(b, 0, 255);
+
+      return rgb_normalize({ r, g, b });
+    }
+    return undefined;
+  }
+  /**
+   * Returns a denormalized representation of the RGB components.
+   *
+   *
+   *
+   * @param components The RGB components to be converted to a normalized values. (0..255)
+   * @returns A denormalized representation of the RGB components.
+   */
+  export function rgb_denormalize(components: rgb): rgb {
+    let { r, g, b } = components;
+
+    r = Math.floor(Math.clamp(r * 255, 0, 255));
+    g = Math.floor(Math.clamp(g * 255, 0, 255));
+    b = Math.floor(Math.clamp(b * 255, 0, 255));
+
+    return { r, g, b };
+  }
+  /**
+   * Returns a normalized representation of the RGB components.
+   *
+   *
+   *
+   * @param components The RGB components to be converted to a normalized values. (0..1)
+   * @returns A normalized representation of the RGB components.
+   */
+  export function rgb_normalize(components: rgb): rgb {
+    let { r, g, b } = components;
+
+    r = Math.clamp(r / 255, 0, 1);
+    g = Math.clamp(g / 255, 0, 1);
+    b = Math.clamp(b / 255, 0, 1);
+
+    return { r, g, b };
   }
   /**
    * Converts an RGB values to a CMYK values.
